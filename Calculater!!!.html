@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculater + Random Painter</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+    <style>
+        .button {
+            width: 150px;
+            height: 50px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <input id="display" disabled>
+    <br/>
+    <button class="button" onclick="appendNumber('1')">1</button>
+    <button class="button" onclick="appendNumber('2')">2</button>
+    <button class="button" onclick="appendNumber('3')">3</button>
+    
+    <br/>
+    <button class="button" onclick="appendNumber('4')">4</button>
+    <button class="button" onclick="appendNumber('5')">5</button>
+    <button class="button" onclick="appendNumber('6')">6</button>
+    
+    <br/>
+    <button class="button" onclick="appendNumber('7')">7</button>
+    <button class="button" onclick="appendNumber('8')">8</button>
+    <button class="button" onclick="appendNumber('9')">9</button>
+    
+    <br/>
+    <button class="button" onclick="appendNumber('0')">0</button>
+    <button class="button" onclick="clearDisplay()">Clear</button>
+    <button class="button" onclick="calculateResult()">=</button>
+    <br/>
+    <button class="button" onclick="performOperation('/')">/</button>
+    <button class="button" onclick="appendDecimal()">.</button>
+    <button class="button" onclick="performOperation('*')">*</button>
+    <br/>
+    <button class="button" onclick="performOperation('+')">+</button>
+    <button class="button" onclick="performOperation('-')">-</button>
+    <button class="button" onclick="performOperation('**')">^</button>
+    <br/>
+    Entering: RANDOM PAINTER Land
+    <br/>
+    Tip #1 Use the key S to stop the Painter and W to start after you have stopped it.
+    <br/>
+    Tip #2 You can use the key Z to clear the canvas, or you could press the button that says,"Clear Canvas".
+    <br/>
+    Tip #3 If you can't figure what background you want, you can just press the small grey button next to the background picker and it will give you a random one.
+    <br/>
+    . . . . . . . . . . . .Under THIS is the Size picker, and under THIS is the Speed of the random painter
+    <br/>
+    <script>
+        let display = document.getElementById('display');
+        let currentOperation = null;
+        let operand1 = '';
+        let operand2 = '';
+
+        function appendNumber(number) {
+            if (currentOperation === null) {
+                operand1 += number;
+            } else {
+                operand2 += number;
+            }
+            updateDisplay();
+        }
+
+
+
+
+        function appendDecimal() {
+            if (currentOperation === null && !operand1.includes('.')) {
+                operand1 += '.';
+            } else if (currentOperation !== null && !operand2.includes('.')) {
+                operand2 += '.';
+            }
+            updateDisplay();
+        }
+
+        function performOperation(operation) {
+            if (currentOperation !== null) {
+                calculateResult();
+            }
+            currentOperation = operation;
+            updateDisplay();
+        }
+
+        function calculateResult() {
+            let result;
+            switch (currentOperation) {
+                case '+':
+                    result = Number(operand1) + Number(operand2);
+                    break;
+                case '-':
+                    result = Number(operand1) - Number(operand2);
+                    break;
+                case '*':
+                    result = Number(operand1) * Number(operand2);
+                    break;
+                case '/':
+                    result = Number(operand1) / Number(operand2);
+                    break;
+                case '**':
+                    result = Math.pow(Number(operand1), Number(operand2));
+                    break;
+            }
+            operand1 = result.toString();
+            operand2 = '';
+            currentOperation = null;
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            operand1 = '';
+            operand2 = '';
+            currentOperation = null;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            display.value = operand1 + (currentOperation !== null ? ' ' + currentOperation + ' ' : '') + operand2;
+        }
+</script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculater + Random Painter</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+<input type="color" id="bgColorPicker" value="#00ff00" onchange="changeBGColor()">
+<button onclick="Random(random(255), random(255), random(255))"></button>
+<input type="color" id="colorPicker" value="#ff0000">
+
+<input type="display" id="brushSize" min="1" max="100" value="2">
+<input type="display" id="brushSpeed" min="0.1" max="1110" value="1">
+<select id="shapeSelector" onchange="shapeChange()">
+  <option value="circle">Circle</option>
+  <option value="square">Square</option>
+  <option value="triangle">Triangle</option>
+  <option value="polygon">Polygon</option>
+</select>
+
+<input type="number" id="sides" min="3" max="100" value="3" style="display: none;">
+<button onclick="saveCanvas('myCanvas', 'jpg')">Save Artwork</button>
+<button onclick="clearCanvas()">Clear Canvas</button>
+<script>
+var Walker = function() {
+    this.x = width / 2;
+    this.y = height / 2;
+};
+Walker.prototype.display = function() {
+    if (isPainting) {
+        fill(200, 200, 200)
+        rect(0, 0, 200, 30);
+        var color = document.getElementById('colorPicker').value;
+        fill(color);
+        text("Width: " + this.x + ", Height: " + this.y, 10, 20);
+        var shape = document.getElementById('shapeSelector').value;
+        var size = document.getElementById('brushSize').value;
+        noStroke();
+        if (shape === 'circle') {
+            ellipse(this.x, this.y, size, size);
+        } else if (shape === 'square') {
+            rect(this.x, this.y, size, size);
+        } else if (shape === 'triangle') {
+            triangle(this.x, this.y - size / 2, this.x - size / 2, this.y + size / 2, this.x + size / 2, this.y + size / 2);
+        } else if (shape === 'polygon') {
+            var sides = document.getElementById('sides').value;
+            polygon(this.x, this.y, size, sides);
+        }
+    }
+};
+
+Walker.prototype.walk = function() {
+    var choice = floor(random(4));
+    var speed = document.getElementById('brushSpeed').value;
+    if (choice === 0 && this.x < width - 1) {
+        this.x += parseFloat(speed);
+    } else if (choice === 1 && this.x > 1) {
+        this.x -= parseFloat(speed);
+    } else if (choice === 2 && this.y < height - 1) {
+        this.y += parseFloat(speed);
+    } else if (choice === 3 && this.y > 1) {
+        this.y -= parseFloat(speed);
+    }
+};
+var w;
+var isPainting = true;
+function setup() {
+    changeBGColor();
+    createCanvas(1200, 550);
+    background(20, 225, 255);
+    w = new Walker();
+}
+function draw() {
+   
+    for (var i = 0; i < 100; i++) {
+        w.walk();
+        w.display();
+    }
+};
+function polygon(x, y, radius, npoints) {
+  var angle = TWO_PI / npoints;
+  beginShape();
+  for (var a = 0; a < TWO_PI; a += angle) {
+    var sx = x + cos(a) * radius;
+    var sy = y + sin(a) * radius;
+    vertex(sx, sy);
+  }
+  endShape(CLOSE);
+}
+function Random() {
+    fill(0);
+    background(random(255),random(255),random(255,))
+}
+function shapeChange() {
+  var shape = document.getElementById('shapeSelector').value;
+  if (shape === 'polygon') {
+    document.getElementById('sides').style.display = 'inline';
+  } else {
+    document.getElementById('sides').style.display = 'none';
+  }
+}
+function changeBGColor() {
+  background(document.getElementById('bgColorPicker').value);
+}
+function resetGame() {
+    w.x = width / 2;
+    w.y = height / 2;
+    background(20, 225, 255);
+}
+function keyPressed() {
+    if (key === 'z' || key === 'Z') {
+        resetGame();
+    }
+    if (key === 'w' || key === 'W') {
+        isPainting = true;
+    }
+    if (key === 's' || key === 'S') {
+        isPainting = false;
+    }
+}
+
+function saveCanvas(name, type) {
+    let cnv = createCanvas(1200, 550);
+    saveCanvas(cnv, name, type);
+}
+function clearCanvas() {
+    clear();
+    background(20, 225, 255);
+}
+</script>
+</body>
+</html>
+
